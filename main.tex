@@ -1,0 +1,243 @@
+%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% SITE A GARDER : http://titilog.free.fr/
+
+
+\documentclass[10pt]{beamer}
+%\includeonlyframes{yy}
+\usepackage[french]{babel}
+\usepackage{color, colortbl}
+\definecolor{Gray}{gray}{0.9}
+\newcolumntype{g}{>{\columncolor{Gray}}c}
+\hypersetup{%
+  % pdfborder = {0 0 0},
+  colorlinks, urlcolor=blue, linkcolor=, }
+  
+\makeatletter \let\@mycite\@cite
+\def\@cite#1#2{{\hypersetup{linkcolor=mLightBlue}[{#1\if@tempswa ,
+      #2\fi}]}} \makeatother
+
+\usetheme{m} %%%%%
+% \usepackage[version=3]{mhchem}
+\usepackage{caption}
+\captionsetup[figure]{labelformat=empty}
+\usepackage{fontspec}
+% \usepackage[backend=bibtex]{biblatex} \usepackage[square]{natbib}
+% \bibliography{main}
+\usepackage[french]{algorithm2e}
+\usefonttheme[onlymath]{serif} \usepackage{amsmath}
+\usepackage{subcaption} \usepackage{appendixnumberbeamer}
+\usepackage{tabularx, booktabs} \usepackage{multirow}
+\usepackage{multicol} \usepackage{array} \usepackage{pbox}
+\PassOptionsToPackage{enumerate}{shortlabels} \newcommand\ExtraSep
+{\dimexpr\cmidrulewidth\relax}
+\captionsetup{font=scriptsize,labelfont=scriptsize}
+% \addtobeamertemplate{background canvas}{\transfade[duration=0.05]}{}
+\title{Problématiques en Informatique soulevées par le projet Optimum}
+
+\author{{\large Florent \textsc{Grélard}}\\\\
+  Serge \textsc{Miguet}, Mihaela \textsc{Scuturici}, Mehdi
+  \textsc{Ayadi} }
+
+\titlegraphic{\vspace{-1cm}\hspace*{0.12\linewidth}%
+   \includegraphics[width=0.25\linewidth]{fig/logo_liris2}\hspace*{0.1\textwidth}~%
+   \includegraphics[width=0.1\linewidth]{fig/logo_lyon2}\hspace*{0.12\linewidth}%
+   \includegraphics[width=0.25\linewidth]{fig/logo_imu}\hspace*{0.12\linewidth}%
+ }
+\setbeamercolor{bbb}{fg=red}
+
+\let\oldfootnotesize\footnotesize
+\renewcommand*{\footnotesize}{\oldfootnotesize\tiny}
+\newcommand\labelitemi{$\bullet$}
+\renewcommand{\thefootnote}{[\arabic{footnote}]}
+% \newrobustcmd*{\footlessfullcite}{\AtNextCite{\renewbibmacro{in:}{}\renewbibmacro{year:}{}}\footfullcite}
+% \newrobustcmd*{\lessfullcite}{\AtNextCite{\renewbibmacro{in:}{}\renewbibmacro{year:}{}}\fullcite}
+
+
+
+\newcommand{\backupbegin}{ \newcounter{framenumberappendix}
+  \setcounter{framenumberappendix}{\value{framenumber}} }
+\newcommand{\backupend}{
+  \addtocounter{framenumberappendix}{-\value{framenumber}}
+  \addtocounter{framenumber}{\value{framenumberappendix}} }
+% http://mcclinews.free.fr/latex/introbeamer/les_couleurs.html
+\begin{document}
+
+% affiche le logo en bas à droite
+\logo{\includegraphics[height=0.5cm]{fig/logo_liris.png}}
+% enlève la barre de navigation
+\setbeamertemplate{navigation symbols}{ }
+\setbeamertemplate{blocks}[rounded][shadow=false]
+% Ombre aux blocks
+\setbeamertemplate{caption}{\insertcaption}
+
+\date{27 juin 2018} % set the Date
+\AtBeginSection[]{
+  \begingroup \setbeamercolor{background canvas}{bg=mLightBlue}
+
+  \setbeamercolor{background canvas}{bg=mLightBlue}
+
+  \setbeamertemplate{subsection in toc}
+  {\leavevmode\leftskip=2em$\bullet$\hskip1em\inserttocsubsection\par}
+
+   \setbeamercolor{section in toc shaded}{bg=paleGrey}
+
+
+  \setbeamercolor{section in toc}{fg=paleGrey, bg=mLightBlue}
+  \setbeamercolor{local structure}{fg=mLightBlueLighter,bg=mLightBlue}
+  \setbeamercolor{section in toc shaded}{fg=mLightBlue, bg=mLightBlue}
+  \setbeamertemplate{section in toc}[circle] \setbeamertemplate{section
+    in toc shaded}[default][80]
+
+
+  \setbeamercolor{subsection in toc}{fg=paleGrey, bg=mLightBlue}
+  \begin{frame}[plain]
+    \frametitle{\textcolor{paleGrey}{Table des matières}}
+    \tableofcontents[currentsection, hideothersubsections]
+  \end{frame}
+  \endgroup
+} \renewcommand{\insertnavigation}[1]{}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+
+\section{Enjeux}
+\subsection{Passage à l'échelle}
+
+\begin{frame}{Passage à l'échelle : exemple}
+  Pour une requête donnée, l'\textbf{ensemble des photographies} est parcouru. \\[0.5cm]
+
+  \begin{block}{Problème}
+    Le temps de calcul \textbf{augmente proportionnellement} avec le nombre de photographies.
+  \end{block}
+
+  \begin{table}[]
+    \centering
+    \caption{Temps de réponse (en millisecondes) pour une recherche exhaustive :}
+    \label{table:exhaustif}
+    \begin{tabular}{cc}
+      \hline
+      Nombre de polygones & Exhaustive \\ \hline
+      500                 & 4          \\
+      5000                & 19         \\
+      50000               & 220        \\
+      500000               & 5200       \\ \hline
+    \end{tabular}
+  \end{table}
+
+\end{frame}
+
+\begin{frame}{Passage à l'échelle : exemple}
+  \alert{R-Tree} : indexation des données spatiales dans des \textbf{rectangles imbriqués}. \\
+  Permet de rejeter rapidement des zones de l'espace lors d'une recherche
+
+    \begin{figure}
+    \includegraphics<1>[width=0.45\textwidth]{fig/rtree_0}
+    \includegraphics<2>[width=0.45\textwidth]{fig/rtree_1}
+    \includegraphics<3>[width=0.45\textwidth]{fig/rtree_2}
+    \includegraphics<4->[width=0.45\textwidth]{fig/rtree_4}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Passage à l'échelle}
+   \begin{table}[]
+    \centering
+    \caption{Temps de réponse (en millisecondes) pour une recherche exhaustive et pour une recherche sur un R-tree :}
+    \label{my-label}
+    \begin{tabular}{ccc}
+      \hline
+      Nombre de polygones & Exhaustive & R-tree \\ \hline
+      500                 & 4          & 1      \\
+      5000                & 19         & 1      \\
+      50000               & 220        & 2      \\
+      500000               & 5200       & 2      \\ \hline
+    \end{tabular}
+  \end{table}
+
+  $\Rightarrow$ De façon générale, utiliser des structures de données et algorithmes \textbf{efficaces en temps de calcul}.
+\end{frame}
+
+\subsection{Correction de la position}
+\begin{frame}{Correction de la position}
+   \begin{block}{Problème}
+        Le système GPS de l'appareil photo est source d'\textbf{imprécisions}.
+      \end{block}
+  \begin{columns}
+    \begin{column}[c]{0.6\textwidth}
+     
+
+      \textbf{Correction de la position :}
+      \begin{enumerate}
+      \item<1-> Obtention d'une image de synthèse à partir de la position imprécise et d'un modèle 3D texturé de la ville
+      \item<2-> Appariement de l'image de synthèse avec l'image réelle
+      \item<3-> Correction de la position et de la direction (exemple : algorithme des huit points~\cite{Longuet1981})
+      \end{enumerate}
+
+    \end{column}
+    \begin{column}[c]{0.4\textwidth}
+      \begin{figure}[ht]
+        \centering
+        \includegraphics<1>[width=0.95\textwidth]{fig/recalage_0}
+        \includegraphics<2>[width=0.95\textwidth]{fig/recalage_1}
+        \includegraphics<3>[width=0.95\textwidth]{fig/recalage_2}
+        \caption{}
+        \label{}
+      \end{figure}
+
+    \end{column}
+  \end{columns}
+ 
+\end{frame}
+
+\subsection{Appariement d'images}
+\begin{frame}{Analyse du contenu de l'image}
+  \textbf{Objectif :} analyser le contenu des images afin de faire des grappes plus pertinentes.
+
+  \textbf{Pistes :}
+  \begin{enumerate}
+  \item Descripteurs de texture
+  \item Segmentation sémantique : catégorise des régions de l'image en fonction du sens qu'on leur porte
+  \end{enumerate}
+
+\end{frame}
+
+\section{Questions ouvertes}
+\subsection{Outil}
+\begin{frame}{Sur l'outil}
+  Il est possible de générer un modèle 3D à partir d'images visualisant le même bâtiment. \\
+  \alert{Est-ce que cela peut être pertinent ?} \\[1cm]
+
+  Images d'archives (Fonds Paul) :
+  \alert{Comment les intégrer et les représenter ?}\\[1cm]
+  
+  \alert{D'autres suggestions...?}
+\end{frame}
+
+\subsection{Site Web du projet}
+\begin{frame}{Sur le site Web du projet}
+  Présenter les questionnements et réflexions. \\
+  \alert{Publications périodiques, ou bien unique à l'issue du projet ?} \\[1cm]
+
+  Présenter les photographies de Guillaume. \\
+  \alert{Quelle sélection opérer?}
+\end{frame}
+
+ \begin{frame}[allowframebreaks]
+  \frametitle{Références}
+   \setbeamertemplate{bibliography item}{$\bullet$}
+  \bibliographystyle{apalike}
+   \scriptsize{
+     \bibliography{main}
+   }
+ \end{frame}
+
+ 
+
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
